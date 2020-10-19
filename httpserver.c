@@ -304,6 +304,8 @@ void *handle_clients(void *void_request_handler) {
 
 }
 
+//redo part 7
+
 /* 
  * Creates `num_threads` amount of threads. Initializes the work queue.
  */
