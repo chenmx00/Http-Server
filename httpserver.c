@@ -64,16 +64,6 @@ void serve_file(int fd, char *path) {
     write(fd, buffer, read_cnt);
   }
   close(file);
-
-    
-
-  
-  
-
-
-
-
-
 }
 
 void serve_directory(int fd, char *path) {
@@ -99,11 +89,12 @@ void serve_directory(int fd, char *path) {
             http_format_href(part, path, file_name);
             strncat(body, part, strlen(part));
     }
-    printf(body);
-    write(fd, body, strlen(body));
-    
+    write(fd, body, strlen(body));    
   }
+  close(fd);
 }
+
+
 void *proxy_helper(void *input_void) {
   struct i_o *in = (struct i_o *)input_void;
   int fd1 = in->fd1;
@@ -180,8 +171,6 @@ void handle_files_request(int fd) {
   } else {
     http_start_response(fd, 404);
   }
-  
-
   close(fd);
   return;
 }
@@ -238,14 +227,12 @@ void handle_proxy_request(int fd) {
   if (connection_status < 0) {
     /* Dummy request parsing, just to be compliant. */
     http_request_parse(fd);
-
     http_start_response(fd, 502);
     http_send_header(fd, "Content-Type", "text/html");
     http_end_headers(fd);
     close(target_fd);
     close(fd);
     return;
-
   }
 
 
@@ -298,13 +285,12 @@ void *handle_clients(void *void_request_handler) {
   int fd = wq_pop(&work_queue);
   request_handler(fd);
   close(fd);
-  return;
+  return 0;
 
   /* TODO: PART 7 */
 
 }
 
-//redo part 7
 
 /* 
  * Creates `num_threads` amount of threads. Initializes the work queue.
